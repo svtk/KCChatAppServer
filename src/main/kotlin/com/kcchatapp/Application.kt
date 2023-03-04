@@ -12,5 +12,6 @@ fun main() {
 
 @Suppress("unused")
 fun Application.module() {
+    configureSockets()
     configureRouting()
 }
