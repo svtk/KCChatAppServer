@@ -5,6 +5,9 @@ val ktor_version: String by project // = 2.2.4
 val kotlin_version: String by project // = "1.8.0"
 val logback_version: String by project // = "1.2.11"
 val datetime_version: String by project // = "0.4.0"
+val exposed_version: String by project
+val h2_version: String by project
+val hikaricp_version: String by project
 
 
 plugins {
@@ -36,6 +39,12 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$datetime_version")
+    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
+    implementation("com.h2database:h2:$h2_version")
+    implementation("com.zaxxer:HikariCP:$hikaricp_version")
     testImplementation("io.ktor:ktor-server-tests")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")}
 
