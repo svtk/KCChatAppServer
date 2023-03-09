@@ -13,7 +13,7 @@ val hikaricp_version: String by project
 plugins {
     kotlin("jvm") version "1.8.10"
     id("io.ktor.plugin") version "2.2.4"
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.10"
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
 
 }
@@ -45,8 +45,18 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("com.h2database:h2:$h2_version")
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
+    implementation("io.ktor:ktor-client-encoding:2.2.4")
     testImplementation("io.ktor:ktor-server-tests")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")}
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation("org.awaitility:awaitility:4.1.1")
+
+    testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("io.ktor:ktor-client-websockets")
+    implementation("io.ktor:ktor-client-content-negotiation")
+}
 
 kover {
     engine.set(IntellijEngine("1.0.683"))
@@ -67,4 +77,8 @@ kover {
             excludes += listOf("com.kcchatapp.db.*")
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
