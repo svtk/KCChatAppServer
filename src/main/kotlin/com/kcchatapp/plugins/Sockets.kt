@@ -1,6 +1,5 @@
 package com.kcchatapp.plugins
 
-import com.kcchatapp.Connection
 import com.kcchatapp.db.DAOFacade
 import com.kcchatapp.db.H2Db
 import com.kcchatapp.db.InMemoryDb
@@ -26,10 +25,9 @@ fun Application.configureSockets() {
     val dao = db()
 
     routing {
-        val connections = Collections.synchronizedSet<Connection>(LinkedHashSet())
+        val connections = Collections.synchronizedSet<DefaultWebSocketServerSession>(LinkedHashSet())
         webSocket("/chat") {
-            val thisConnection = Connection(this)
-            connections += thisConnection
+            connections += this
             try {
                 dao.getChatEvents()
                     .forEach { event -> sendSerialized(event) }
@@ -38,14 +36,14 @@ fun Application.configureSockets() {
                         println("Received event: $event")
                         dao.saveChatEvent(event)
                         connections.forEach {
-                            it.session.sendSerialized(event)
+                            it.sendSerialized(event)
                         }
                     }
                 }
             } catch (e: Exception) {
                 println(e.localizedMessage)
             } finally {
-                connections -= thisConnection
+                connections -= this
             }
         }
     }
