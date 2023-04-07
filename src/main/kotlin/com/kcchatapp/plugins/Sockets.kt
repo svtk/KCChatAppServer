@@ -43,7 +43,7 @@ fun Application.configureSockets() {
                     println("Received event: $event")
                     // saving incoming event
                     dao.saveChatEvent(event)
-                    // emitting this event to all other websockets
+                    // broadcasting this event to all other websockets
                     eventsFlow.emit(event)
                 }
             } catch (e: Exception) {
