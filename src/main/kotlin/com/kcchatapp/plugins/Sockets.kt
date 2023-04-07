@@ -3,15 +3,15 @@ package com.kcchatapp.plugins
 import com.kcchatapp.db.DAOFacade
 import com.kcchatapp.db.H2Db
 import com.kcchatapp.db.InMemoryDb
-import io.ktor.serialization.*
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import model.ChatEvent
 import java.time.Duration
-import java.util.*
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -23,27 +23,31 @@ fun Application.configureSockets() {
     }
 
     val dao = db()
+    val eventsFlow = MutableSharedFlow<ChatEvent>()
 
     routing {
-        val connections = Collections.synchronizedSet<DefaultWebSocketServerSession>(LinkedHashSet())
         webSocket("/chat") {
-            connections += this
             try {
-                dao.getChatEvents()
-                    .forEach { event -> sendSerialized(event) }
-                for (content in incoming) {
-                    converter?.deserialize<ChatEvent>(content)?.let { event ->
-                        println("Received event: $event")
-                        dao.saveChatEvent(event)
-                        connections.forEach {
-                            it.sendSerialized(event)
-                        }
+                // previous events
+                dao.getChatEvents().forEach { event ->
+                    sendSerialized(event)
+                }
+                launch {
+                    // subscribing to new events
+                    eventsFlow.collect {
+                        sendSerialized(it)
                     }
+                }
+                while (true) {
+                    val event = receiveDeserialized<ChatEvent>()
+                    println("Received event: $event")
+                    // saving incoming event
+                    dao.saveChatEvent(event)
+                    // emitting this event to all other websockets
+                    eventsFlow.emit(event)
                 }
             } catch (e: Exception) {
                 println(e.localizedMessage)
-            } finally {
-                connections -= this
             }
         }
     }
