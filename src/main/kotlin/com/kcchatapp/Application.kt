@@ -1,5 +1,6 @@
 package com.kcchatapp
 
+import com.kcchatapp.chat.Chat
 import io.ktor.server.application.*
 import com.kcchatapp.plugins.*
 import io.ktor.server.engine.*
@@ -12,6 +13,7 @@ fun main() {
 
 @Suppress("unused")
 fun Application.module() {
-    configureSockets()
+    val chat = Chat()
+    configureSockets(chat)
     configureRouting()
 }

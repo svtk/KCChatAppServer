@@ -1,5 +1,6 @@
 package com.kcchatapp
 
+import com.kcchatapp.chat.Chat
 import com.kcchatapp.plugins.configureSockets
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
@@ -24,7 +25,7 @@ class ChatApplicationTest {
     fun testSimpleConversation() {
         testApplication {
             application {
-                configureSockets()
+                configureSockets(Chat())
 //                assertThat(runBlocking { dao.subscribeToChatEvents() }).isEmpty()
             }
 
