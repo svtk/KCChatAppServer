@@ -1,5 +1,5 @@
-import kotlinx.kover.api.IntellijEngine
-import kotlinx.kover.api.JacocoEngine
+import kotlinx.kover.api.DefaultIntellijEngine
+import kotlinx.kover.api.DefaultJacocoEngine
 
 val ktor_version: String by project // = 2.2.4
 val kotlin_version: String by project // = "1.8.0"
@@ -53,8 +53,8 @@ dependencies {
 }
 
 kover {
-    engine.set(IntellijEngine("1.0.683"))
-//    engine.set(JacocoEngine("0.8.7"))
+    engine.set(DefaultIntellijEngine)
+//    engine.set(DefaultJacocoEngine)
 
     verify {
         rule {
