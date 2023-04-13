@@ -13,7 +13,7 @@ fun main() {
 
 @Suppress("unused")
 fun Application.module() {
-    val chat = Chat()
+    val chat = Chat(replay = 100)
     configureSockets(chat)
     configureRouting()
 }
