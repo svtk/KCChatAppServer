@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import model.ChatEvent
 
-class Chat(replay: Int = 10) {
+class Chat(replay: Int = 100) {
     private val _eventFlow: MutableSharedFlow<ChatEvent> = MutableSharedFlow(replay = replay)
 
     val eventFlow: SharedFlow<ChatEvent> get() = _eventFlow
