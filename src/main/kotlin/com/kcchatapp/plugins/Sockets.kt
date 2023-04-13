@@ -22,18 +22,22 @@ fun Application.configureSockets(chat: Chat) {
 
     routing {
         webSocket("/chat") {
-            coroutineScope {
-                launch {
-                    chat.eventFlow.collect { event ->
-                        sendSerialized(event)
-                    }
-                }
-                launch {
-                    while (true) {
-                        val event = receiveDeserialized<ChatEvent>()
-                        chat.broadcastEvent(event)
-                    }
-                }
+            handleSocket(this, chat)
+        }
+    }
+}
+
+suspend fun handleSocket(socket: WebSocketServerSession, chat: Chat) {
+    coroutineScope {
+        launch {
+            chat.subscribeToEvents { event ->
+                socket.sendSerialized(event)
+            }
+        }
+        launch {
+            while (true) {
+                val event = socket.receiveDeserialized<ChatEvent>()
+                chat.broadcastToOtherClients(event)
             }
         }
     }
